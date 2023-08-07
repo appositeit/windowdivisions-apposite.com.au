@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.windowdivisions" path="/org/gnome/shell/extensions/windowdivisions/">
+    <key name="center-shortcut" type="as">
+      <default><![CDATA[['<Super>c']]]></default>
+      <summary>Center Window Shortcut Key</summary>
+    </key>
+    <key name="rotate-shortcut" type="as">
+      <default><![CDATA[['<Super><Shift>c']]]></default>
+      <summary>Shortcut to rotate between left, center, right window</summary>
+    </key>
+    <key name="divisions" type="i">
+      <summary>How much height we increase to the window</summary>
+      <default>3</default>
+    </key>
+    
+  </schema>
+</schemalist>

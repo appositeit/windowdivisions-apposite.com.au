@@ -1,0 +1,18 @@
+{
+  "description": "Define the number of divisions you want, and cycle a window through those divisions",
+  "name": "Windows by divisions",
+  "settings-schema": "org.gnome.shell.extensions.windowdivisions",
+  "shell-version": [
+    "3.34",
+    "3.36",
+    "3.38",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44"
+  ],
+  "url": "https://github.com/apposite/windowdivisions",
+  "uuid": "windowdivisions@apposite.com.au",
+  "version": 1
+}
