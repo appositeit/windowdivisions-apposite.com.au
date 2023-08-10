@@ -38,18 +38,45 @@ class Extension {
     }
 
     moveAround() {
+        let nMonitors = global.display.get_n_monitors();
         const divisions = this._settings.get_int('divisions');
-
         let pos = null;
         if (this._previous === null) {
             pos = 0;
         } else {
             pos = this._previous + 1;
-            if (pos >= 2*divisions) {
+            if (pos >= nMonitors*divisions) {
                 pos = 0;
             }
         }
         this.moveByMode(pos);
+    }
+
+    /*
+    Returns a list of monitors in x order from left to right. Each element of the list
+    is a list of monitor properties: x, y, width, height.
+    */
+    monitorStructure() {
+        let monitors = [];
+
+        let nMonitors = global.display.get_n_monitors();
+        for(let i=0;i<nMonitors;i++) {
+            let wa = this.getWorkAreaForMonitor(i);
+            let md = [wa.x, wa.y, wa.width, wa.height]
+            if (monitors.length>0) {
+                for(let j=0;j<monitors.length;j++) {
+                    log(`j: ${j}`)
+                    if (monitors[j][0]>wa.x) {
+                        monitors.splice(j,0,md);
+                        break;
+                    }
+                }
+            }
+            if (monitors.length < (i+1)) {
+                monitors.push(md);
+            }
+        }
+        return monitors;
     }
 
     moveByMode(pos) {
@@ -58,25 +85,28 @@ class Extension {
             log('No active window');
             return;
         }
-        const monitor = activeWindow.get_monitor();
-        const workarea = this.getWorkAreaForMonitor(monitor);
-        const dash_width = Main.overview.dash.width;
-
+        let monitors = this.monitorStructure();
         const divisions = this._settings.get_int('divisions');
+        let nMonitors = global.display.get_n_monitors();
+        let dest_monitor = Math.floor(pos/divisions) % nMonitors;
+        let section = pos - dest_monitor * divisions;
+        let md = monitors[dest_monitor];
+        let x = 2;
+        x += md[0] + section * md[2] / divisions;
+        let y = md[1];
+        let W = 0;
+        if (md[2] > md[0]) {
+            W = (md[2] - md[0])/divisions;
+        } else {
+            W = md[2]/divisions;
+        }
+        let H = md[3];
 
-
-        const W = workarea.width / divisions;
-        // from the topbar #TODO:setting
-        const Y = Main.panel.height + 1;
-        const H = workarea.height - Main.panel.height - 2;
-
-
-        // position from the left
-        let X = dash_width + 2 + workarea.width * pos / divisions;
+        // log(`x: ${x}, y: ${y}, W: ${W}, H: ${H}`);
 
         this.moveWindow(activeWindow, {
-            x: Math.floor(X),
-            y: Math.floor(Y),
+            x: Math.floor(x),
+            y: Math.floor(y),
             width: Math.floor(W),
             height: Math.floor(H),
         });
